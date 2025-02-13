@@ -161,6 +161,13 @@ export interface Env {
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
+		// Check if the request is for the favicon and ignore it
+		const url = new URL(request.url);
+
+		if (url.pathname === "/favicon.ico") {
+			return new Response(null, { status: 404 });
+		}
+
 		const prisma = new PrismaClient({
 			datasourceUrl: env.DATABASE_URL,
 		}).$extends(withAccelerate());
@@ -188,7 +195,13 @@ Run the development server:
 npm run dev
 ```
 
-Visit [`https://localhost:8787`](https://localhost:8787) to see your app in action.
+Visit [`https://localhost:8787`](https://localhost:8787) to see your app display the following output:
+
+```sh
+Number of users in the database: 1
+```
+
+Every time you refresh the page, a new user is created. The number displayed will increment by `1` with each refresh as it returns the number of users in your database.
 
 ## 4. Deploy the application to Cloudflare
 
